@@ -3,6 +3,15 @@
 //#include <Wire.h>
 #include "honeywell_abp_i2c.h"
 
+#define SENSOR_POLL_TIME_SEC 30
+
+#define USE_POWER_PIN
+#if defined USE_POWER_PIN
+const int8_t powerPin = 22;
+#define PowerOn()  digitalWrite(powerPin, HIGH)
+#define PowerOff()  digitalWrite(powerPin, LOW)
+#endif //USE_POWER_PIN
+
 #define USE_RTCLIB Sodaq_DS3231
 #if defined USE_RTCLIB 
 #include <Sodaq_DS3231.h>
@@ -45,13 +54,6 @@ uint32_t getNowSecs2kTz(void) {
     return (uint32_t)currentEpochTime-EPOCH_TIME_OFF;
 }
 #endif //defined USE_RTCLIB 
-
-#define USE_POWER_PIN
-#if defined USE_POWER_PIN
-const int8_t powerPin = 22;
-#define PowerOn()  digitalWrite(powerPin, HIGH)
-#define PowerOff()  digitalWrite(powerPin, LOW)
-#endif //USE_POWER_PIN
 
 void setup()
 {
@@ -113,51 +115,24 @@ void loop()
         SerialTty.print(p_str);
         SerialTty.print(", temp(C),");
         SerialTty.print(t_str);
-        //SerialTty.println("");
 
         #if 1
         SerialTty.print("  ,");
-        //SerialTty.print("status=");
         SerialTty.print(abp_sensor.IC_status, BIN);
         SerialTty.print(",");
-        //SerialTty.print("bridge_data=");
         SerialTty.print(abp_sensor.IC_rawPressure, DEC);
-        //SerialTty.print("tempC=");
         SerialTty.print(",");
-        SerialTty.println(abp_sensor.IC_rawTemperature, DEC);
-        //SerialTty.println("");
+        SerialTty.print(abp_sensor.IC_rawTemperature, DEC);
         #endif
+
+        SerialTty.println("");
     } else {
         SerialTty.print(" failed to read sensor");  
-        #if 0
-        // for some reason my chip triggers a diagnostic fault
-        // on 50% of powerups without a notable impact 
-        // to the output values.
-        if ( el == 4 ) {
-            SerialTty.println("err sensor missing");
-        } else {
-            if ( el == 3 ) {
-                SerialTty.print("err diagnostic fault ");
-                SerialTty.println(ps.status, BIN);
-            }
-            if ( el == 2 ) {
-                // if data has already been feched since the last
-                // measurement cycle
-                SerialTty.print("warn stale data ");
-                SerialTty.println(ps.status, BIN);
-            }
-            if ( el == 1 ) {
-                // chip in command mode
-                // no clue how to end up here
-                SerialTty.print("warn command mode ");
-                SerialTty.println(ps.status, BIN);
-            }
-            #endif
     }
     #if defined USE_POWER_PIN
     PowerOff();
     #endif //USE_POWER_PIN
 
-   delay(2000);
+   delay(SENSOR_POLL_TIME_SEC*1000);
 }
 
