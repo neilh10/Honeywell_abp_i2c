@@ -5,7 +5,7 @@ Software Copyright Neil Hancock see LICENSE.md
 I2C protocol https://sensing.honeywell.com/index.php?ci_id=45841
 https://sps.honeywell.com/us/en/products/sensing-and-iot/sensors/pressure-sensors/board-mount-pressure-sensors/basic-abp-series
 
-This lsimple software design has been influenced  by 
+This simple software design has been influenced  by 
 Arduino paradigm for availability and simple I2C access 
 https://github.com/rodan/honeywell_hsc_ssc_i2c - for algorithims
 and designed to be incorporated in

@@ -4,6 +4,7 @@
 #include "honeywell_abp_i2c.h"
 
 #define SENSOR_POLL_TIME_SEC 30
+const char sensorUnderTest[] = "ABPMAND001PG2A3 Range 1PSI";
 
 #define USE_POWER_PIN
 #if defined USE_POWER_PIN
@@ -63,7 +64,10 @@ void setup()
     while (!SerialTty.available());
     Wire.begin();
 
-    SerialTty.println("Honeywell ABP (also HSC SCC) sensor poll");
+    SerialTty.print("Honeywell ABP (also HSC SCC): Poll sensor ");
+    SerialTty.print(sensorUnderTest);
+    SerialTty.print(" every (sec) ");
+    SerialTty.println(SENSOR_POLL_TIME_SEC);
 
     #if defined USE_POWER_PIN
     // If power defined, use it to turn ON before access
